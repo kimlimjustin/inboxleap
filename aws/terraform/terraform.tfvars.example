@@ -1,0 +1,33 @@
+# Terraform Variables Configuration
+# Copy this file to terraform.tfvars and update with your actual values
+
+# Domain and application settings
+domain_name = "yourdomain.com"  # Replace with your actual domain
+app_name = "emailtaskrouter"
+
+# AWS Region
+aws_region = "us-east-1"
+
+# Database settings
+db_username = "emailtaskrouter"
+db_password = "change-this-to-a-secure-password"  # Use a strong password (min 8 chars)
+
+# Email settings
+admin_email = "admin@yourdomain.com"  # Replace with your admin email
+# Note: Postmark credentials are stored in SSM by the deploy script
+# POSTMARK_SERVER_TOKEN and POSTMARK_FROM_EMAIL will be prompted if missing
+
+# SES webhook security
+ses_webhook_secret = "your-secure-random-webhook-secret-here"  # Generate a random string for security
+
+# Container resource allocation
+backend_cpu = 512
+backend_memory = 1024
+frontend_cpu = 256
+frontend_memory = 512
+
+# Environment
+environment = "production"
+
+# Optional: Availability Zones (defaults to first 2 AZs in region)
+# availability_zones = ["us-east-1a", "us-east-1b"]

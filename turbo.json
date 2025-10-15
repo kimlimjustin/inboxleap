@@ -1,0 +1,40 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "env": ["NODE_ENV"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": [
+        "DATABASE_URL",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "APP_URL",
+        "SESSION_SECRET",
+        "SERVICE_EMAIL",
+        "SERVICE_EMAIL_PASSWORD",
+        "SERVICE_IMAP_HOST",
+        "SERVICE_IMAP_PORT",
+        "SERVICE_SMTP_HOST",
+        "SERVICE_SMTP_PORT",
+        "CLAUDE_API_KEY",
+        "ANTHROPIC_API_KEY"
+      ]
+    },
+    "check": {
+      "dependsOn": ["^check"]
+    },
+    "db:push": {
+      "cache": false,
+      "env": ["DATABASE_URL"]
+    },
+    "test:email": {
+      "cache": false,
+      "env": ["DATABASE_URL", "CLAUDE_API_KEY", "ANTHROPIC_API_KEY"]
+    }
+  }
+}

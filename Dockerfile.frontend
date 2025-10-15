@@ -1,0 +1,55 @@
+# Build stage
+FROM public.ecr.aws/docker/library/node:20-alpine AS base
+WORKDIR /app
+
+# Install pnpm without corepack (more reliable on CI/Windows)
+RUN npm i -g pnpm@9.12.3
+
+# Only copy files needed to resolve workspace dependencies
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.json ./
+COPY apps/web/package.json ./apps/web/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
+
+FROM base AS deps
+# Use a persistent cache for pnpm store
+RUN --mount=type=cache,id=pnpm,target=/root/.pnpm-store \
+    pnpm install --frozen-lockfile --store-dir /root/.pnpm-store
+
+FROM deps AS build
+# Copy only the source needed to build the web app
+COPY packages/shared/ ./packages/shared/
+COPY apps/web/ ./apps/web/
+
+# Build the web app workspace
+RUN pnpm --filter @email-task-router/web build
+
+# Production stage
+FROM public.ecr.aws/nginx/nginx:alpine
+
+# Install wget for health checks and libcap to grant low-port bind capability
+RUN apk add --no-cache wget libcap \
+  && setcap 'cap_net_bind_service=+ep' $(command -v nginx)
+
+RUN rm -rf /etc/nginx/conf.d/*
+COPY nginx/frontend.conf /etc/nginx/conf.d/default.conf
+
+# Copy built assets
+COPY --from=build /app/apps/web/dist /usr/share/nginx/html
+
+RUN addgroup -g 1001 -S nginx-user && \
+  adduser -S nginx-user -u 1001 && \
+  chown -R nginx-user:nginx-user /usr/share/nginx/html && \
+  chown -R nginx-user:nginx-user /var/cache/nginx && \
+  chown -R nginx-user:nginx-user /var/log/nginx && \
+  touch /var/run/nginx.pid && \
+  chown nginx-user:nginx-user /var/run/nginx.pid
+
+EXPOSE 80
+
+USER nginx-user
+
+# Healthcheck against root (static site)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

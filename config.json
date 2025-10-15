@@ -1,0 +1,11 @@
+{
+  "ports": {
+    "frontend": 3000,
+    "backend": 5173
+  },
+  "development": {
+    "proxy": {
+      "target": "http://localhost:5173"
+    }
+  }
+}

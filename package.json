@@ -1,0 +1,27 @@
+{
+  "name": "email-task-router",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "pnpm@9.12.3",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "predev": "node scripts/copy-env-to-server.js",
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "check": "turbo check",
+    "db:push": "turbo db:push",
+    "test:email": "turbo test:email",
+    "start": "turbo start"
+  },
+  "devDependencies": {
+    "@types/smtp-server": "^3.5.11",
+    "turbo": "^2.5.5"
+  },
+  "dependencies": {
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "smtp-server": "^3.14.0"
+  }
+}
