@@ -21,7 +21,7 @@ router.get('/:agentType', async (req: any, res) => {
       return res.status(401).json({ error: 'Not authenticated' });
     }
 
-    if (!agentType || !['todo', 't5t', 'alex', 'polly', 'faq'].includes(agentType)) {
+    if (!agentType || !['todo', 't5t', 'analyzer', 'polly', 'faq'].includes(agentType)) {
       return res.status(400).json({ error: 'Invalid agent type' });
     }
 
@@ -65,7 +65,7 @@ router.post('/', async (req: any, res) => {
       return res.status(400).json({ error: 'Agent type and instance name are required' });
     }
 
-    if (!['todo', 't5t', 'alex', 'polly', 'faq'].includes(agentType)) {
+    if (!['todo', 't5t', 'analyzer', 'polly', 'faq'].includes(agentType)) {
       return res.status(400).json({ error: 'Invalid agent type' });
     }
 

@@ -193,7 +193,7 @@ Key capabilities:
 - Analyze cross-agent patterns and correlations
 - Provide insights based on Tanya intelligence reports
 - Track task management trends from Todo
-- Understand attachment processing from Alex
+- Understand attachment processing from Analyzer
 - Monitor knowledge base usage from FAQ
 - Detect sentiment and engagement patterns
 

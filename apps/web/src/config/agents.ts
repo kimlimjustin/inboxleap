@@ -57,22 +57,22 @@ export const AGENTS: Agent[] = [
     exampleOutput: 'Poll created with 3 options, sent to 8 team members, results: 1 PM (4 votes), 9 AM (3 votes), 3 PM (1 vote)'
   },
   {
-    id: 'alex',
+    id: 'analyzer',
     name: 'Document Analyzer',
     type: 'File Intelligence',
-    email: 'alex@inboxleap.com',
+    email: 'analyzer@inboxleap.com',
     description: 'Analyzes attachments in email threads, extracts insights from documents, and creates summaries of shared files.',
     status: 'Active',
     icon: Paperclip,
     color: 'orange',
     category: 'teams',
-    route: '/teams/alex',
+    route: '/teams/analyzer',
     features: [
       'Analyzes document attachments',
       'Extracts insights from PDFs, images, and documents',
       'Creates summaries of shared files in thread'
     ],
-    exampleInput: '"Email alex@inboxleap.com with project documents and team members CC\'d"',
+    exampleInput: '"Email analyzer@inboxleap.com with project documents and team members CC\'d"',
     exampleOutput: 'Analyzed 3 attachments: contract.pdf (5 pages, key terms extracted), diagram.png (flowchart identified), requirements.docx (12 action items found)'
   },
   {

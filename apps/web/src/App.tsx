@@ -60,7 +60,7 @@ function AppContent() {
             <Route path="/intelligence/t5t" component={MainDashboard} />
             <Route path="/teams" component={MainDashboard} />
             <Route path="/teams/todo" component={MainDashboard} />
-            <Route path="/teams/alex" component={MainDashboard} />
+            <Route path="/teams/analyzer" component={MainDashboard} />
             <Route path="/teams/faq" component={MainDashboard} />
             <Route path="/teams/polly" component={MainDashboard} />
             <Route path="/agent" component={MainDashboard} />

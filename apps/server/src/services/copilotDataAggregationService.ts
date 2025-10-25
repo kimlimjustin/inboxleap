@@ -3,7 +3,7 @@ import { t5tCache } from './t5tCache';
 import { t5tAnalysisService } from './t5tAnalysisService';
 
 export interface AgentActivityData {
-  agentType: 't5t' | 'todo' | 'alex' | 'faq' | 'polly';
+  agentType: 't5t' | 'todo' | 'analyzer' | 'faq' | 'polly';
   userId?: string;
   companyId?: number;
   instanceId?: number;
@@ -173,14 +173,14 @@ class CopilotDataAggregationService {
   }
 
   // Get Alex attachment analysis data
-  async getAlexContextData(userId?: string): Promise<AgentContextData['alex']> {
+  async getAnalyzerContextData(userId?: string): Promise<AgentContextData['analyzer']> {
     try {
       // Get recent attachments and analyses
       const recentAttachments: any[] = []; // Would get from storage
       const analysisResults: any[] = []; // Would get from storage
 
       const recentActivities = this.recentActivities
-        .filter(activity => activity.agentType === 'alex')
+        .filter(activity => activity.agentType === 'analyzer')
         .filter(activity => !userId || activity.userId === userId)
         .slice(0, 50);
 
@@ -190,7 +190,7 @@ class CopilotDataAggregationService {
         recentActivities
       };
     } catch (error) {
-      console.error('🚨 [COPILOT-DATA] Error getting Alex data:', error);
+      console.error('🚨 [COPILOT-DATA] Error getting Analyzer data:', error);
       return {
         recentAttachments: [],
         analysisResults: [],
@@ -231,7 +231,7 @@ class CopilotDataAggregationService {
 
     try {
       // Get data for requested agent types or all
-      const types = agentTypes || ['t5t', 'todo', 'alex', 'faq'];
+      const types = agentTypes || ['t5t', 'todo', 'analyzer', 'faq'];
 
       if (types.includes('t5t')) {
         contextData.t5t = await this.getTanyaIntelligenceData(undefined, userId) || undefined;
@@ -241,8 +241,8 @@ class CopilotDataAggregationService {
         contextData.todo = await this.getTodoContextData(userId, companyId);
       }
 
-      if (types.includes('alex')) {
-        contextData.alex = await this.getAlexContextData(userId);
+      if (types.includes('analyzer')) {
+        contextData.alex = await this.getAnalyzerContextData(userId);
       }
 
       if (types.includes('faq')) {

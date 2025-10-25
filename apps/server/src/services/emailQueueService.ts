@@ -1,12 +1,11 @@
 import { storage } from '../storage';
 import { QueueManager } from './queue/manager';
 import type { QueuedEmail } from './queue/types';
-import { T5THandler, AlexHandler, AnalyzerHandler, TaskHandler } from './handlers';
+import { T5THandler, AnalyzerHandler, TaskHandler } from './handlers';
 import { isServiceEmail } from './utils/emailUtils';
 
 export class EmailQueueService extends QueueManager {
   private t5tHandler: T5THandler;
-  private alexHandler: AlexHandler;
   private analyzerHandler: AnalyzerHandler;
   private taskHandler: TaskHandler;
 
@@ -14,7 +13,6 @@ export class EmailQueueService extends QueueManager {
     super();
 
     this.t5tHandler = new T5THandler(this);
-    this.alexHandler = new AlexHandler(this);
     this.analyzerHandler = new AnalyzerHandler(this);
     this.taskHandler = new TaskHandler(this);
   }
@@ -77,22 +75,12 @@ export class EmailQueueService extends QueueManager {
         return;
       }
 
-      // Route to Alex agent  
-      const alexRecipient = allRecipients.find(recipient => 
-        recipient.toLowerCase().match(/^alex@inboxleap\.com$/i)
-      );
-      if (alexRecipient) {
-        console.log(`📎 [ALEX] Email sent to Alex agent: ${alexRecipient}`);
-        await this.alexHandler.process(queuedEmail, processedEmail, alexRecipient);
-        return;
-      }
-
-      // Route to Analyzer agent (legacy support)
-      const analyzerRecipient = allRecipients.find(recipient => 
+      // Route to Analyzer agent
+      const analyzerRecipient = allRecipients.find(recipient =>
         recipient.toLowerCase().match(/^analyzer@inboxleap\.com$/i)
       );
       if (analyzerRecipient) {
-        console.log(`🔬 [ANALYZER] Email sent to Analyzer agent: ${analyzerRecipient}`);
+        console.log(`📎 [ANALYZER] Email sent to Analyzer agent: ${analyzerRecipient}`);
         await this.analyzerHandler.process(queuedEmail, processedEmail, analyzerRecipient);
         return;
       }

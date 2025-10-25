@@ -4,13 +4,13 @@ import { isAuthenticated } from '../googleAuth';
 import { attachmentAnalysisService } from '../services/attachmentAnalysisService';
 
 export function registerAttachmentRoutes(app: Express) {
-  // Attachment Analysis API Endpoints for Alex agent
+  // Attachment Analysis API Endpoints for Analyzer agent
   app.get('/api/attachments/:projectId', isAuthenticated, async (req: any, res) => {
     try {
       const { projectId } = req.params;
       const userId = req.user.id;
       
-      console.log(`📎 [ALEX] Getting attachments for project ${projectId} by user ${userId}`);
+      console.log(`📎 [ANALYZER] Getting attachments for project ${projectId} by user ${userId}`);
       
       const attachments = await storage.getEmailAttachmentsByProject(parseInt(projectId));
       
@@ -23,7 +23,7 @@ export function registerAttachmentRoutes(app: Express) {
         analysis: attachment.analysis
       }));
 
-      console.log(`📎 [ALEX] Found ${transformedAttachments.length} attachments for project ${projectId}`);
+      console.log(`📎 [ANALYZER] Found ${transformedAttachments.length} attachments for project ${projectId}`);
       res.json(transformedAttachments);
     } catch (error) {
       console.error('Error fetching attachments:', error);
@@ -41,7 +41,7 @@ export function registerAttachmentRoutes(app: Express) {
       const userId = req.user.id;
       const { forceRefresh } = req.body;
       
-      console.log(`📎 [ALEX] ${forceRefresh ? 'Force refreshing' : 'Refreshing'} analysis for project ${projectId} by user ${userId}`);
+      console.log(`📎 [ANALYZER] ${forceRefresh ? 'Force refreshing' : 'Refreshing'} analysis for project ${projectId} by user ${userId}`);
       
       const attachments = await storage.getEmailAttachmentsByProject(parseInt(projectId));
       let analyzedCount = 0;
@@ -50,12 +50,12 @@ export function registerAttachmentRoutes(app: Express) {
       for (const attachment of attachments) {
         // Skip already analyzed attachments unless force refresh is requested
         if (attachment.analysis && !forceRefresh) {
-          console.log(`📎 [ALEX] Attachment ${attachment.id} already analyzed, skipping (use forceRefresh=true to re-analyze)`);
+          console.log(`📎 [ANALYZER] Attachment ${attachment.id} already analyzed, skipping (use forceRefresh=true to re-analyze)`);
           continue;
         }
         
         try {
-          console.log(`📎 [ALEX] ${forceRefresh ? 'Re-analyzing' : 'Analyzing'} attachment: ${attachment.filename} (${attachment.contentType})`);
+          console.log(`📎 [ANALYZER] ${forceRefresh ? 'Re-analyzing' : 'Analyzing'} attachment: ${attachment.filename} (${attachment.contentType})`);
           
           // Use enhanced LLM analysis logic
           const analysis = await attachmentAnalysisService.performEnhancedAnalysis(attachment);
@@ -64,13 +64,13 @@ export function registerAttachmentRoutes(app: Express) {
           analyzedCount++;
           totalInsights += analysis.keyPoints.length;
           
-          console.log(`📎 [ALEX] Completed ${forceRefresh ? 're-analysis' : 'analysis'} for ${attachment.filename}`);
+          console.log(`📎 [ANALYZER] Completed ${forceRefresh ? 're-analysis' : 'analysis'} for ${attachment.filename}`);
         } catch (analysisError) {
-          console.error(`📎 [ALEX] Error analyzing attachment ${attachment.id}:`, analysisError);
+          console.error(`📎 [ANALYZER] Error analyzing attachment ${attachment.id}:`, analysisError);
         }
       }
       
-      console.log(`📎 [ALEX] ${forceRefresh ? 'Refresh' : 'Analysis'} complete: ${analyzedCount} attachments processed, ${totalInsights} insights extracted`);
+      console.log(`📎 [ANALYZER] ${forceRefresh ? 'Refresh' : 'Analysis'} complete: ${analyzedCount} attachments processed, ${totalInsights} insights extracted`);
       
       res.json({
         success: true,
@@ -95,7 +95,7 @@ export function registerAttachmentRoutes(app: Express) {
       const { projectId } = req.params;
       const userId = req.user.id;
       
-      console.log(`📎 [ALEX] Analyzing attachments for project ${projectId} by user ${userId}`);
+      console.log(`📎 [ANALYZER] Analyzing attachments for project ${projectId} by user ${userId}`);
       
       const attachments = await storage.getEmailAttachmentsByProject(parseInt(projectId));
       let analyzedCount = 0;
@@ -103,12 +103,12 @@ export function registerAttachmentRoutes(app: Express) {
       
       for (const attachment of attachments) {
         if (attachment.analysis) {
-          console.log(`📎 [ALEX] Attachment ${attachment.id} already analyzed, skipping`);
+          console.log(`📎 [ANALYZER] Attachment ${attachment.id} already analyzed, skipping`);
           continue;
         }
         
         try {
-          console.log(`📎 [ALEX] Analyzing attachment: ${attachment.filename} (${attachment.contentType})`);
+          console.log(`📎 [ANALYZER] Analyzing attachment: ${attachment.filename} (${attachment.contentType})`);
           
           let analysis: any;
           let extractedText = '';
@@ -117,11 +117,11 @@ export function registerAttachmentRoutes(app: Express) {
           // Try to get attachment content if available
           if (attachment.content) {
             try {
-              console.log(`📎 [ALEX] Decoding base64 content for ${attachment.filename}`);
+              console.log(`📎 [ANALYZER] Decoding base64 content for ${attachment.filename}`);
               actualContent = Buffer.from(attachment.content, 'base64');
-              console.log(`📎 [ALEX] Successfully decoded ${actualContent.length} bytes`);
+              console.log(`📎 [ANALYZER] Successfully decoded ${actualContent.length} bytes`);
             } catch (decodeError) {
-              console.error(`📎 [ALEX] Error decoding base64 content for ${attachment.filename}:`, decodeError);
+              console.error(`📎 [ANALYZER] Error decoding base64 content for ${attachment.filename}:`, decodeError);
             }
           }
           
@@ -153,7 +153,7 @@ export function registerAttachmentRoutes(app: Express) {
                 }
               };
             } catch (pdfError) {
-              console.error(`📎 [ALEX] Error processing PDF content:`, pdfError);
+              console.error(`📎 [ANALYZER] Error processing PDF content:`, pdfError);
               analysis = {
                 summary: `PDF document ${attachment.filename} detected but could not be fully processed.`,
                 keyPoints: [
@@ -213,7 +213,7 @@ export function registerAttachmentRoutes(app: Express) {
                 }
               };
             } catch (imageError) {
-              console.error(`📎 [ALEX] Error processing image content:`, imageError);
+              console.error(`📎 [ANALYZER] Error processing image content:`, imageError);
               analysis = {
                 summary: `Image ${attachment.filename} detected but could not be fully processed.`,
                 keyPoints: [
@@ -267,13 +267,13 @@ export function registerAttachmentRoutes(app: Express) {
           analyzedCount++;
           totalInsights += analysis.keyPoints.length;
           
-          console.log(`📎 [ALEX] Completed analysis for ${attachment.filename}`);
+          console.log(`📎 [ANALYZER] Completed analysis for ${attachment.filename}`);
         } catch (analysisError) {
-          console.error(`📎 [ALEX] Error analyzing attachment ${attachment.id}:`, analysisError);
+          console.error(`📎 [ANALYZER] Error analyzing attachment ${attachment.id}:`, analysisError);
         }
       }
       
-      console.log(`📎 [ALEX] Analysis complete: ${analyzedCount} attachments analyzed, ${totalInsights} insights extracted`);
+      console.log(`📎 [ANALYZER] Analysis complete: ${analyzedCount} attachments analyzed, ${totalInsights} insights extracted`);
       
       res.json({
         success: true,
@@ -297,7 +297,7 @@ export function registerAttachmentRoutes(app: Express) {
       const { attachmentId } = req.params;
       const userId = req.user.id;
       
-      console.log(`📎 [ALEX] Download request for attachment ${attachmentId} by user ${userId}`);
+      console.log(`📎 [ANALYZER] Download request for attachment ${attachmentId} by user ${userId}`);
       
       const attachment = await storage.getEmailAttachment(parseInt(attachmentId));
       if (!attachment) {
@@ -324,10 +324,10 @@ export function registerAttachmentRoutes(app: Express) {
         res.setHeader('Content-Type', attachment.contentType);
         res.setHeader('Content-Length', buffer.length);
         
-        console.log(`📎 [ALEX] Serving attachment ${attachment.originalName} (${buffer.length} bytes)`);
+        console.log(`📎 [ANALYZER] Serving attachment ${attachment.originalName} (${buffer.length} bytes)`);
         res.send(buffer);
       } catch (decodeError) {
-        console.error(`📎 [ALEX] Error decoding attachment content:`, decodeError);
+        console.error(`📎 [ANALYZER] Error decoding attachment content:`, decodeError);
         res.status(500).json({ message: 'Error processing attachment content' });
       }
       

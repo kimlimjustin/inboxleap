@@ -41,7 +41,7 @@ router.post('/generate-emails', isAuthenticated, async (req, res) => {
     const { agentInstanceService } = await import('../services/agentInstanceService');
 
     // Get all agent instances for this user across all agent types
-    const agentTypes = ['todo', 't5t', 'alex', 'polly', 'faq', 'sally', 'agent'];
+    const agentTypes = ['todo', 't5t', 'analyzer', 'polly', 'faq', 'sally', 'agent'];
     const allUserInstances = [];
 
     for (const agentType of agentTypes) {
@@ -331,7 +331,7 @@ router.delete('/clear-emails', isAuthenticated, async (req, res) => {
     const { agentInstanceService } = await import('../services/agentInstanceService');
 
     // Get all agent instances for this user across all agent types
-    const agentTypes = ['todo', 't5t', 'alex', 'polly', 'faq', 'sally', 'agent'];
+    const agentTypes = ['todo', 't5t', 'analyzer', 'polly', 'faq', 'sally', 'agent'];
     const allUserInstances = [];
 
     for (const agentType of agentTypes) {

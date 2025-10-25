@@ -413,6 +413,45 @@ export const emailAttachments = pgTable("email_attachments", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Document Analysis Results - Standalone document analysis (not tied to projects)
+export const documentAnalysisResults = pgTable("document_analysis_results", {
+  id: serial("id").primaryKey(),
+  messageId: varchar("message_id").notNull(), // Email message ID or web upload ID
+  userId: varchar("user_id").notNull().references(() => users.id),
+  filename: varchar("filename").notNull(),
+  fileType: varchar("file_type").notNull(),
+  fileSize: integer("file_size").notNull(),
+  fileHash: varchar("file_hash"), // SHA-256 hash for deduplication
+
+  // Storage
+  s3Key: varchar("s3_key"), // S3 storage key if using S3
+  localPath: varchar("local_path"), // Local file path if stored locally
+  content: text("content"), // Base64 encoded file content (for small files)
+
+  // Analysis results
+  analysisData: jsonb("analysis_data"), // Structured data extraction results
+  aiAnalysis: jsonb("ai_analysis").notNull(), // AI-generated insights and analysis
+  processingResults: jsonb("processing_results"), // OCR, virus scan, etc.
+
+  // Metadata
+  category: varchar("category"), // Document category (financial, legal, etc.)
+  confidence: integer("confidence"), // AI confidence score 0-100
+  extractedText: text("extracted_text"), // Full text extraction for search
+  virusScanPassed: boolean("virus_scan_passed").default(true),
+  processedAt: timestamp("processed_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("idx_document_analysis_user").on(table.userId),
+  messageIdx: index("idx_document_analysis_message").on(table.messageId),
+  categoryIdx: index("idx_document_analysis_category").on(table.category),
+  processedAtIdx: index("idx_document_analysis_processed_at").on(table.processedAt),
+}));
+
+export const documentAnalysisResultsRelations = relations(documentAnalysisResults, ({ one }) => ({
+  user: one(users, { fields: [documentAnalysisResults.userId], references: [users.id] }),
+}));
+
 // FAQ System Tables
 
 // FAQ Organizations
@@ -430,7 +469,7 @@ export const faqOrganizations = pgTable("faq_organizations", {
 export const companyAgentEmails = pgTable("company_agent_emails", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").notNull().references(() => companies.id, { onDelete: "cascade" }),
-  agentType: varchar("agent_type", { length: 50 }).notNull(), // 'todo', 'alex', 'polly', 'faq', 't5t', etc.
+  agentType: varchar("agent_type", { length: 50 }).notNull(), // 'todo', 'analyzer', 'polly', 'faq', 't5t', etc.
   instanceName: varchar("instance_name", { length: 100 }).notNull(), // e.g., "primary", "sales", "support", etc.
   emailAddress: varchar("email_address").notNull().unique(), // e.g., "todo+acmecorp-sales@inboxleap.com"
   isActive: boolean("is_active").default(true),
@@ -452,7 +491,7 @@ export const companyAgentEmails = pgTable("company_agent_emails", {
 export const companyAgentSettings = pgTable("company_agent_settings", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").notNull().references(() => companies.id, { onDelete: "cascade" }),
-  agentType: varchar("agent_type", { length: 50 }).notNull(), // 'todo', 'alex', 'polly', 'faq', 't5t', etc.
+  agentType: varchar("agent_type", { length: 50 }).notNull(), // 'todo', 'analyzer', 'polly', 'faq', 't5t', etc.
   defaultSettings: jsonb("default_settings").default({}), // Default settings for all instances
   isEnabled: boolean("is_enabled").default(true),
   maxInstances: integer("max_instances").default(5), // Maximum number of instances allowed
@@ -506,7 +545,7 @@ export const agentInstances = pgTable("agent_instances", {
 export const userAgentEmails = pgTable("user_agent_emails", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  agentType: varchar("agent_type", { length: 50 }).notNull(), // 'todo', 'alex', 'polly', 'faq', 't5t', etc.
+  agentType: varchar("agent_type", { length: 50 }).notNull(), // 'todo', 'analyzer', 'polly', 'faq', 't5t', etc.
   instanceName: varchar("instance_name", { length: 100 }).notNull(), // e.g., "primary", "personal", "work", etc.
   emailAddress: varchar("email_address").notNull().unique(), // e.g., "todo+user123@inboxleap.com"
   isActive: boolean("is_active").default(true),
@@ -754,6 +793,7 @@ export const insertPollingInsightSchema = createInsertSchema(pollingInsights);
 export const insertUserDepartmentSchema = createInsertSchema(userDepartments);
 export const insertPollingAgentParticipantSchema = createInsertSchema(pollingAgentParticipants);
 export const insertEmailOptOutSchema = createInsertSchema(emailOptOuts);
+export const insertDocumentAnalysisResultSchema = createInsertSchema(documentAnalysisResults);
 
 // New company system schemas
 export const insertCompanySchema = createInsertSchema(companies);
@@ -856,6 +896,8 @@ export type PollingAgentParticipant = typeof pollingAgentParticipants.$inferSele
 export type InsertPollingAgentParticipant = typeof pollingAgentParticipants.$inferInsert;
 export type EmailOptOut = typeof emailOptOuts.$inferSelect;
 export type InsertEmailOptOut = typeof emailOptOuts.$inferInsert;
+export type DocumentAnalysisResult = typeof documentAnalysisResults.$inferSelect;
+export type InsertDocumentAnalysisResult = typeof documentAnalysisResults.$inferInsert;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
 export type InsertPasswordResetToken = typeof passwordResetTokens.$inferInsert;
 export type TrustConfirmationToken = typeof trustConfirmationTokens.$inferSelect;

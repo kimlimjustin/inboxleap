@@ -240,7 +240,7 @@ export function registerAgentSecurityRoutes(app: Express) {
         {
           timestamp: new Date(Date.now() - 60000),
           event: 'config_update',
-          agent: 'alex',
+          agent: 'analyzer',
           admin: req.user.email,
           reason: 'Updated trust requirements',
           details: { requireTrust: true }

@@ -18,6 +18,7 @@ import { registerCopilotRoutes } from "./routes/copilot";
 import { registerAttachmentRoutes } from "./routes/attachments";
 import { registerFAQRoutes } from "./routes/faq";
 import { registerStatsRoutes } from "./routes/stats";
+import { registerDocumentRoutes } from "./routes/documents";
 import { registerTrustRoutes } from "./routes/trust";
 import { registerAdminRoutes } from "./routes/admin";
 import { registerNotificationRoutes } from "./routes/notifications";
@@ -88,6 +89,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   registerPollingAgentsRoutes(app);
   registerCopilotRoutes(app);
   registerAttachmentRoutes(app);
+  registerDocumentRoutes(app);
   registerFAQRoutes(app);
   registerTrustRoutes(app);
   registerAdminRoutes(app);

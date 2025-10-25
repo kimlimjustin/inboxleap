@@ -69,7 +69,7 @@ interface InviteTeamMemberForm {
 
 const AGENT_TYPES = [
   { value: 'todo', label: 'Todo', description: 'Project management agent' },
-  { value: 'alex', label: 'Alex', description: 'Document analysis agent' },
+  { value: 'analyzer', label: 'Alex', description: 'Document analysis agent' },
   { value: 'polly', label: 'Polly', description: 'Polling and surveys agent' },
   { value: 'faq', label: 'FAQ', description: 'Frequently asked questions' },
   { value: 't5t', label: 'Tanya', description: 'Customer intelligence agent' }

@@ -5,7 +5,7 @@ export class EmailRouter {
   // Agent email routing (existing agents only)
   private readonly taskAgentEmails = new Set<string>([
     `todo@${emailConfigManager.getServiceDomain()}`,
-    `alex@${emailConfigManager.getServiceDomain()}`,
+    `analyzer@${emailConfigManager.getServiceDomain()}`,
     `faq@${emailConfigManager.getServiceDomain()}`,
     `todo@${emailConfigManager.getServiceDomain()}`,
     `tasks@${emailConfigManager.getServiceDomain()}`
@@ -55,14 +55,14 @@ export class EmailRouter {
     const hasCompanySpecificAgent = allRecipients.some(r => {
       const serviceDomain = emailConfigManager.getServiceDomain();
       // Pattern matches: agentType+companyname@domain or agentType+companyname-instance@domain
-      const pattern = new RegExp(`^(todo|alex|polly|faq|t5t)\\+[a-z0-9\\-]+@${serviceDomain.replace('.', '\\.')}$`);
+      const pattern = new RegExp(`^(todo|analyzer|polly|faq|t5t)\\+[a-z0-9\\-]+@${serviceDomain.replace('.', '\\.')}$`);
       return pattern.test(r);
     });
 
     if (hasCompanySpecificAgent) {
       // Determine route based on agent type
       const agentType = this.extractAgentTypeFromEmail(allRecipients);
-      if (agentType && ['todo', 'alex', 'faq'].includes(agentType)) {
+      if (agentType && ['todo', 'analyzer', 'faq'].includes(agentType)) {
         return 'task';
       } else if (agentType && ['polly', 't5t'].includes(agentType)) {
         return 'intelligence';
@@ -86,10 +86,10 @@ export class EmailRouter {
    */
   extractAgentTypeFromEmail(recipients: string[]): string | null {
     const serviceDomain = emailConfigManager.getServiceDomain();
-    
+
     for (const recipient of recipients) {
       const normalizedEmail = this.normalizeAddress(recipient);
-      const pattern = new RegExp(`^(todo|alex|polly|faq|t5t)\\+[a-z0-9\\-]+@${serviceDomain.replace('.', '\\.')}$`);
+      const pattern = new RegExp(`^(todo|analyzer|polly|faq|t5t)\\+[a-z0-9\\-]+@${serviceDomain.replace('.', '\\.')}$`);
       const match = normalizedEmail.match(pattern);
       if (match) {
         return match[1];
@@ -106,7 +106,7 @@ export class EmailRouter {
   extractAgentDetailsFromEmail(email: string): { companyId: string; instanceName: string | null; agentType: string } | null {
     const normalizedEmail = this.normalizeAddress(email);
     const serviceDomain = emailConfigManager.getServiceDomain();
-    const pattern = new RegExp(`^(todo|alex|polly|faq|t5t)\\+([a-z0-9\\-]+)@${serviceDomain.replace('.', '\\.')}$`);
+    const pattern = new RegExp(`^(todo|analyzer|polly|faq|t5t)\\+([a-z0-9\\-]+)@${serviceDomain.replace('.', '\\.')}$`);
     const match = normalizedEmail.match(pattern);
     
     if (match) {

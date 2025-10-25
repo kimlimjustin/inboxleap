@@ -252,7 +252,7 @@ describe('Agent Security Layer', () => {
       expect(response.body.message).toContain('updated successfully');
       // The response should contain the new config, but might have merged with existing defaults
       expect(response.body.config).toEqual(expect.objectContaining({
-        agentName: 'alex',
+        agentName: 'analyzer',
         policies: expect.arrayContaining(['rate-limit']),
         trustedDomains: ['inboxleap.com'],
         requireTrust: true,
@@ -341,7 +341,7 @@ describe('Agent Security Layer', () => {
             policies: ['rate-limit', 'content-scanning']
           },
           {
-            agentName: 'alex',
+            agentName: 'analyzer',
             policies: ['rate-limit', 'trust-relationship']
           }
         ]

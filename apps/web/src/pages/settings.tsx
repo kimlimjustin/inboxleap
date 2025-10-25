@@ -745,7 +745,7 @@ export default function SettingsPage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-purple-600 font-bold">•</span>
-                    <span><strong className="text-purple-700">Alex (alex@inboxleap.com):</strong> Document analysis and attachment processing</span>
+                    <span><strong className="text-purple-700">Alex (analyzer@inboxleap.com):</strong> Document analysis and attachment processing</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-600 font-bold">•</span>

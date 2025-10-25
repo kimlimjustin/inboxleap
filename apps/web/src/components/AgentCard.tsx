@@ -37,7 +37,7 @@ const getAgentColorClass = (agent: Agent) => {
     'tanya': 'agent-tanya',
     'sally': 'agent-sally', 
     'todo': 'agent-todo',
-    'alex': 'agent-alex',
+    'analyzer': 'agent-alex',
     'faq': 'agent-faq',
     'polly': 'agent-polly',
   };
@@ -49,7 +49,7 @@ const getAgentLightColorClass = (agent: Agent) => {
     'tanya': 'agent-tanya-light',
     'sally': 'agent-sally-light',
     'todo': 'agent-todo-light', 
-    'alex': 'agent-alex-light',
+    'analyzer': 'agent-alex-light',
     'faq': 'agent-faq-light',
     'polly': 'agent-polly-light',
   };

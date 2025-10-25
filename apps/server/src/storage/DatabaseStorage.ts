@@ -32,6 +32,7 @@ import {
   companyAgentEmails,
   companyAgentSettings,
   userAgentEmails,
+  documentAnalysisResults,
   type User,
   type UpsertUser,
   type Project,
@@ -1893,10 +1894,28 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getEmailAttachmentByMessageAndFilename(messageId: string, filename: string): Promise<any | undefined> {
+    try {
+      const [attachment] = await db.select()
+        .from(emailAttachments)
+        .where(and(
+          eq(emailAttachments.emailMessageId, messageId),
+          eq(emailAttachments.filename, filename)
+        ));
+      return attachment;
+    } catch (error) {
+      console.error('Error getting email attachment by message and filename:', error);
+      return undefined;
+    }
+  }
+
   async updateEmailAttachment(id: number, updateData: any): Promise<any> {
     try {
       const [attachment] = await db.update(emailAttachments)
-        .set(updateData)
+        .set({
+          ...updateData,
+          updatedAt: new Date()
+        })
         .where(eq(emailAttachments.id, id))
         .returning();
       return attachment;
@@ -1938,9 +1957,26 @@ export class DatabaseStorage implements IStorage {
 
   async updateEmailAttachmentAnalysis(id: number, analysisData: any): Promise<any> {
     try {
-      return await this.updateEmailAttachment(id, analysisData);
+      console.log('[DB] Updating attachment analysis for ID:', id);
+      console.log('[DB] Analysis data:', JSON.stringify(analysisData, null, 2));
+
+      const result = await db.update(emailAttachments)
+        .set({
+          analysis: analysisData,
+          updatedAt: new Date()
+        })
+        .where(eq(emailAttachments.id, id))
+        .returning();
+
+      console.log('[DB] Update successful');
+      return result[0];
     } catch (error) {
       console.error('Error updating email attachment analysis:', error);
+      console.error('Error details:', {
+        id,
+        analysisDataKeys: Object.keys(analysisData || {}),
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
       throw error;
     }
   }
@@ -2186,6 +2222,81 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error('Error getting user stats:', error);
       return { projectCount: 0, taskCount: 0 };
+    }
+  }
+
+  // Document Analysis Result operations
+  async createDocumentAnalysisResult(resultData: any): Promise<any> {
+    try {
+      const [result] = await db.insert(documentAnalysisResults)
+        .values(resultData)
+        .returning();
+      return result;
+    } catch (error) {
+      console.error('Error creating document analysis result:', error);
+      throw error;
+    }
+  }
+
+  async getDocumentAnalysisResults(userId: string, limit: number = 20): Promise<any[]> {
+    try {
+      return await db.select()
+        .from(documentAnalysisResults)
+        .where(eq(documentAnalysisResults.userId, userId))
+        .orderBy(desc(documentAnalysisResults.processedAt))
+        .limit(limit);
+    } catch (error) {
+      console.error('Error getting document analysis results:', error);
+      return [];
+    }
+  }
+
+  async getDocumentAnalysisResult(id: number): Promise<any | undefined> {
+    try {
+      const [result] = await db.select()
+        .from(documentAnalysisResults)
+        .where(eq(documentAnalysisResults.id, id));
+      return result;
+    } catch (error) {
+      console.error('Error getting document analysis result:', error);
+      return undefined;
+    }
+  }
+
+  async getDocumentAnalysisResultByMessageId(messageId: string): Promise<any | undefined> {
+    try {
+      
+      const [result] = await db.select()
+        .from(documentAnalysisResults)
+        .where(eq(documentAnalysisResults.messageId, messageId));
+      return result;
+    } catch (error) {
+      console.error('Error getting document analysis result by message ID:', error);
+      return undefined;
+    }
+  }
+
+  async updateDocumentAnalysisResult(id: number, updateData: any): Promise<any> {
+    try {
+      
+      const [result] = await db.update(documentAnalysisResults)
+        .set({ ...updateData, updatedAt: new Date() })
+        .where(eq(documentAnalysisResults.id, id))
+        .returning();
+      return result;
+    } catch (error) {
+      console.error('Error updating document analysis result:', error);
+      throw error;
+    }
+  }
+
+  async deleteDocumentAnalysisResult(id: number): Promise<void> {
+    try {
+      await db.delete(documentAnalysisResults)
+        .where(eq(documentAnalysisResults.id, id));
+    } catch (error) {
+      console.error('Error deleting document analysis result:', error);
+      throw error;
     }
   }
 

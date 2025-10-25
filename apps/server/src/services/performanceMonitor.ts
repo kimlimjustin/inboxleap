@@ -29,7 +29,7 @@ export class PerformanceMonitor {
     t5t: { individual: 0.03, batch: 0.0002 },
     todo: { individual: 0.02, batch: 0.005 },
     polly: { individual: 0.04, batch: 0.01 },
-    alex: { individual: 0.08, batch: 0.02 },
+    analyzer: { individual: 0.08, batch: 0.02 },
     faq: { individual: 0.01, batch: 0.002 }
   };
 

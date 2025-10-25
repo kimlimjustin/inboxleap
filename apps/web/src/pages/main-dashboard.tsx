@@ -11,7 +11,7 @@ import Teams from "@/pages/teams";
 import UserTasks from "@/pages/user-tasks";
 import TodoPage from "@/pages/todo";
 import TodoAgentPage from "@/pages/agents/todo";
-import AlexPage from "@/pages/agents/alex";
+import AnalyzerPage from "@/pages/agents/analyzer";
 import FAQPage from "@/pages/agents/faq";
 import PollyPage from "@/pages/agents/polly";
 import T5TPage from "@/pages/agents/t5t";
@@ -47,7 +47,7 @@ export default function MainDashboard() {
       if (location.startsWith('/teams/todo') || location === '/teams/todo') {
         return 'Task Manager - InboxLeap';
       }
-      if (location.startsWith('/teams/alex') || location === '/teams/alex') {
+      if (location.startsWith('/teams/analyzer') || location === '/teams/analyzer') {
         return 'Document Analyzer - InboxLeap';
       }
       if (location.startsWith('/teams/faq') || location === '/teams/faq') {
@@ -115,8 +115,8 @@ export default function MainDashboard() {
     if (location.startsWith('/teams/todo') || location === '/teams/todo' || location === '/todo') {
       return <TodoPage />;
     }
-    if (location.startsWith('/teams/alex') || location === '/teams/alex') {
-      return <AlexPage />;
+    if (location.startsWith('/teams/analyzer') || location === '/teams/analyzer') {
+      return <AnalyzerPage />;
     }
     if (location.startsWith('/teams/faq') || location === '/teams/faq') {
       return <FAQPage />;

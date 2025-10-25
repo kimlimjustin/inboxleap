@@ -76,7 +76,7 @@ export const DETECTION_PATTERNS: DetectionPattern[] = [
 
   // Document Analyzer (formerly Alex) - File and attachment analysis
   {
-    agentId: 'alex',
+    agentId: 'analyzer',
     priority: 10, // Highest priority when attachments present
     keywords: [
       'attachment', 'document', 'file', 'pdf', 'analyze', 'review',
@@ -322,7 +322,7 @@ export const TEST_CASES = [
       body: 'Hi legal team, please review the attached contract and provide feedback on the terms and conditions.',
       attachments: ['contract.pdf'],
     },
-    expectedAgent: 'alex'
+    expectedAgent: 'analyzer'
   },
   {
     name: 'Help Request',

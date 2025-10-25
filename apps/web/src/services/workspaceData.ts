@@ -93,7 +93,7 @@ export async function fetchWorkspaceData(): Promise<WorkspaceStats> {
           analyzed: Math.floor(totalEmails * 1.2),
           updated: "1h ago"
         },
-        route: "/teams/alex"
+        route: "/teams/analyzer"
       }
     ];
 
@@ -127,7 +127,7 @@ export async function fetchWorkspaceData(): Promise<WorkspaceStats> {
           reach: totalEmails > 0 ? "89%" : "N/A",
           updated: "30m ago"
         },
-        route: "/teams/alex"
+        route: "/teams/analyzer"
       }
     ];
 

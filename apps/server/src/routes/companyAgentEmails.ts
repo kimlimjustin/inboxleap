@@ -5,7 +5,7 @@ import { isAuthenticated } from '../googleAuth';
 const router: Router = express.Router();
 
 // Available agent types
-const AGENT_TYPES = ['todo', 'alex', 'polly', 'faq', 't5t'] as const;
+const AGENT_TYPES = ['todo', 'analyzer', 'polly', 'faq', 't5t'] as const;
 
 // Validation schemas
 const createAgentEmailSchema = z.object({

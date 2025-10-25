@@ -69,12 +69,12 @@ const teamAgents = [
     stats: { processed: 1456, tasks: 134 }
   },
   {
-    id: 'alex',
-    name: 'Alex',
-    email: 'alex@inboxleap.com',
+    id: 'analyzer',
+    name: 'Analyzer',
+    email: 'analyzer@inboxleap.com',
     icon: Paperclip,
-    color: 'agent-alex',
-    lightColor: 'agent-alex-light',
+    color: 'agent-analyzer',
+    lightColor: 'agent-analyzer-light',
     description: 'Analyzes and categorizes email attachments with smart content extraction',
     features: ['File Analysis', 'Content Extraction', 'Document Processing', 'Auto-Categorization'],
     status: 'active' as const,
@@ -231,9 +231,9 @@ const Dashboard = () => {
               <BarChart3 className="h-4 w-4" />
               <span className="hidden sm:inline">Tanya</span>
             </TabsTrigger>
-            <TabsTrigger value="alex" className="gap-2">
+            <TabsTrigger value="analyzer" className="gap-2">
               <Paperclip className="h-4 w-4" />
-              <span className="hidden sm:inline">Alex</span>
+              <span className="hidden sm:inline">Analyzer</span>
             </TabsTrigger>
             <TabsTrigger value="more" className="gap-2">
               <Settings className="h-4 w-4" />
@@ -323,13 +323,13 @@ const Dashboard = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="alex" className="space-y-6">
+          <TabsContent value="analyzer" className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold mb-4 flex items-center gap-3">
-                <div className="w-8 h-8 agent-alex rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 agent-analyzer rounded-lg flex items-center justify-center">
                   <Paperclip className="h-4 w-4" />
                 </div>
-                Alex Dashboard
+                Analyzer Dashboard
               </h2>
               <p className="text-muted-foreground mb-6">
                 Attachment analysis and file management insights.
@@ -345,7 +345,7 @@ const Dashboard = () => {
                   <div className="text-center py-12">
                     <Paperclip className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
                     <p className="text-muted-foreground">
-                      Alex's file analysis dashboard will appear here.
+                      Analyzer's file analysis dashboard will appear here.
                     </p>
                   </div>
                 </CardContent>

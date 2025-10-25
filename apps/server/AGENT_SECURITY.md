@@ -41,7 +41,7 @@ The security layer operates as a middleware between incoming email requests and 
 ```typescript
 // Example: Require trust for Alex agent
 {
-  agentName: 'alex',
+  agentName: 'analyzer',
   policies: ['trust-relationship'],
   requireTrust: true
 }
@@ -125,7 +125,7 @@ The system comes with default configurations for known agents:
 
 // Alex (Document processing agent)
 {
-  agentName: 'alex',
+  agentName: 'analyzer',
   policies: ['rate-limit', 'content-scanning', 'trust-relationship'],
   maxRequestsPerHour: 30,
   requireTrust: true,

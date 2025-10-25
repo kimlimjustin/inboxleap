@@ -11,13 +11,10 @@ import * as crypto from 'crypto';
 
 /**
  * DocumentAnalysisAgent - Intelligent Document Analysis Agent
- * 
+ *
  * Handles document analysis emails sent to:
- * - analyze@inboxleap.com
- * - docs@inboxleap.com
- * - review@inboxleap.com
- * - extract@inboxleap.com
- * 
+ * - analyzer@inboxleap.com
+ *
  * Responsibilities:
  * - Process document attachments with OCR and content analysis
  * - Extract structured data from documents (tables, forms, etc.)
@@ -27,7 +24,7 @@ import * as crypto from 'crypto';
  */
 export class DocumentAnalysisAgent implements IEmailAgent {
   readonly agentName = 'DocumentAnalysisAgent';
-  readonly agentType = 'analysis' as const;
+  readonly agentType = 'analyzer' as const;
   readonly description = 'Intelligent document analysis agent that processes attachments with OCR, extracts data, and generates AI-powered insights';
 
   // Domain configuration - could be made configurable
@@ -38,11 +35,7 @@ export class DocumentAnalysisAgent implements IEmailAgent {
    */
   getHandledEmails(): string[] {
     return [
-      `analyze@${this.serviceDomain}`,
-      `docs@${this.serviceDomain}`,
-      `review@${this.serviceDomain}`,
-      `extract@${this.serviceDomain}`,
-      `document@${this.serviceDomain}`
+      `analyzer@${this.serviceDomain}`
     ];
   }
 
@@ -117,17 +110,30 @@ export class DocumentAnalysisAgent implements IEmailAgent {
       for (const attachment of attachments) {
         try {
           console.log(`🔍 [DocumentAnalysisAgent] Processing attachment: ${attachment.filename} (${attachment.contentType})`);
-          
-          // TODO: Implement file processing - removed fileProcessingService
-          // For now, create a placeholder result
+
+          // Use attachmentAnalysisService for actual file processing
+          const { attachmentAnalysisService } = await import('../services/attachmentAnalysisService');
+
+          const fileData = {
+            filename: attachment.filename,
+            contentType: attachment.contentType,
+            content: attachment.content,
+            size: attachment.content.length
+          };
+
+          const analysis = await attachmentAnalysisService.performEnhancedAnalysis(fileData);
+
           const result = {
             filename: attachment.filename,
             fileType: attachment.contentType,
             fileSize: attachment.content.length,
-            processedFile: null, // TODO: Implement processing
+            processedFile: {
+              extractedText: analysis.extractedText || '',
+              contentAnalysis: analysis.contentAnalysis
+            },
             aiAnalysis: {
-              summary: 'File processing service needs reimplementation',
-              insights: ['Document analysis temporarily unavailable'],
+              summary: analysis.summary,
+              insights: analysis.keyPoints || [],
               anomalies: [],
               dataExtracted: {
                 tables: [],
@@ -136,9 +142,9 @@ export class DocumentAnalysisAgent implements IEmailAgent {
                 keyDates: [],
                 keyNumbers: []
               },
-              recommendations: ['Please wait for file processing feature to be implemented'],
-              category: 'pending',
-              confidence: 0.0
+              recommendations: analysis.insights?.recommendations || [],
+              category: analysis.documentType || 'other',
+              confidence: 0.85
             },
             processedAt: new Date()
           };
@@ -209,9 +215,31 @@ export class DocumentAnalysisAgent implements IEmailAgent {
   }
 
   /**
-   * Process web-uploaded files (alternative to email-based processing)
+   * Process web-uploaded files - DEPRECATED: Use email-based processing instead
+   * This method is kept for backwards compatibility but is no longer used.
    */
   async processWebUpload(files: Array<{
+    buffer: Buffer;
+    originalname: string;
+    mimetype: string;
+    size: number;
+  }>, userId: string, options: {
+    enableOCR?: boolean;
+    enableVirusScanning?: boolean;
+    enableDataAnalysis?: boolean;
+    extractTables?: boolean;
+    extractImages?: boolean;
+  } = {}): Promise<CommandResult> {
+    return {
+      success: false,
+      message: 'Web upload is no longer supported. Please send documents via email to analyzer@inboxleap.com'
+    };
+  }
+
+  /**
+   * LEGACY CODE BELOW - Kept for reference but disabled
+   */
+  private async _legacyProcessWebUpload_DISABLED(files: Array<{
     buffer: Buffer;
     originalname: string;
     mimetype: string;
@@ -273,16 +301,30 @@ export class DocumentAnalysisAgent implements IEmailAgent {
       for (const file of files) {
         try {
           console.log(`🔍 [DocumentAnalysisAgent] Processing ${file.originalname} (${file.mimetype}, ${file.size} bytes)`);
-          
-          // TODO: Implement file processing - removed fileProcessingService
+
+          // Use attachmentAnalysisService for actual file processing
+          const { attachmentAnalysisService } = await import('../services/attachmentAnalysisService');
+
+          const fileData = {
+            filename: file.originalname,
+            contentType: file.mimetype,
+            content: file.buffer,
+            size: file.size
+          };
+
+          const analysis = await attachmentAnalysisService.performEnhancedAnalysis(fileData);
+
           const result = {
             filename: file.originalname,
             fileType: file.mimetype,
             fileSize: file.size,
-            processedFile: null, // TODO: Implement processing
+            processedFile: {
+              extractedText: analysis.extractedText || '',
+              contentAnalysis: analysis.contentAnalysis
+            },
             aiAnalysis: {
-              summary: 'File processing service needs reimplementation',
-              insights: ['Document analysis temporarily unavailable'],
+              summary: analysis.summary,
+              insights: analysis.keyPoints || [],
               anomalies: [],
               dataExtracted: {
                 tables: [],
@@ -291,9 +333,9 @@ export class DocumentAnalysisAgent implements IEmailAgent {
                 keyDates: [],
                 keyNumbers: []
               },
-              recommendations: ['Please wait for file processing feature to be implemented'],
-              category: 'pending',
-              confidence: 0.0
+              recommendations: analysis.insights?.recommendations || [],
+              category: analysis.documentType || 'other',
+              confidence: 0.85
             },
             processedAt: new Date()
           };
@@ -550,11 +592,9 @@ export class DocumentAnalysisAgent implements IEmailAgent {
         };
 
         console.log(`💾 [DocumentAnalysisAgent] Saving to database: ${result.filename}`);
-        // TODO: Uncomment when storage method is available
-        // const stored = await storage.createDocumentAnalysisResult(analysisData);
-        // storedResults.push(stored);
-        storedResults.push({ id: crypto.randomUUID() });
-        
+        const stored = await storage.createDocumentAnalysisResult(analysisData);
+        storedResults.push(stored);
+
         console.log(`✅ [DocumentAnalysisAgent] Successfully stored analysis result for file: ${result.filename}`);
       }
       

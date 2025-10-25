@@ -26,7 +26,7 @@ export interface TanyaContext {
 }
 
 export interface AlexContext {
-  type: 'alex';
+  type: 'analyzer';
   selectedProject?: any;
   projects?: any[];
   attachments?: any[];
@@ -100,9 +100,9 @@ export function CopilotContextProvider({ children }: { children: React.ReactNode
             description: 'Manages email-based project threads and task coordination.'
           }
         };
-      } else if (location.startsWith('/teams/alex') || location === '/teams/alex') {
+      } else if (location.startsWith('/teams/analyzer') || location === '/teams/analyzer') {
         newContext = {
-          type: 'alex',
+          type: 'analyzer',
           agentInfo: {
             name: 'Alex',
             type: 'Attachment Analyzer Agent',

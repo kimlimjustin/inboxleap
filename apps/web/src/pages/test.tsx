@@ -325,7 +325,7 @@ export default function TestPage() {
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p className="text-sm text-blue-700">
                     Test emails will be sent to all your agent email addresses
-                    (t5t@inboxleap.com, todo@inboxleap.com, alex@inboxleap.com, polly@inboxleap.com, faq@inboxleap.com instances).
+                    (t5t@inboxleap.com, todo@inboxleap.com, analyzer@inboxleap.com, polly@inboxleap.com, faq@inboxleap.com instances).
                   </p>
                 </div>
               ) : (

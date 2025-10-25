@@ -367,7 +367,7 @@ export class SecurityLayer {
         allowSelfService: true
       },
       {
-        agentName: 'alex',
+        agentName: 'analyzer',
         policies: ['rate-limit', 'content-scanning', 'trust-relationship'],
         customSettings: {},
         maxRequestsPerHour: 30,
